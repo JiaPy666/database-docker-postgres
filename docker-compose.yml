@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16
+    container_name: pg-parcheggi
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: parcheggi_uda
+    ports:
+      - "5432:5432"
+    networks:
+      - pg-rete
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-parcheggi
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.it
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    networks:
+      - pg-rete
+    depends_on:
+      - db
+    restart: always
+
+networks:
+  pg-rete:
+    driver: bridge
+
+volumes:
+  pg-data:
